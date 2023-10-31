@@ -1,9 +1,7 @@
 package org.app.bean;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
@@ -21,44 +19,25 @@ public class CreateNewContact {
     }
 
 
-//    public Contact newContact() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Input name contact");
-//        String name = nameOrSurname(scanner);
-//
-//        System.out.println("Input surname contact");
-//        String surname = nameOrSurname(scanner);
-//
-//        System.out.println("Input patronymic contact");
-//        String patronymic = patronymic(scanner);
-//
-//        System.out.println("Input tell number in format \"+79521234567\"");
-//        String telNumber = telNumber(scanner);
-//
-//        System.out.println("Input email in format \"test@test.ru\"");
-//        String email = email(scanner);
-//
-//        System.out.println("Contact added successful.");
-//        return new Contact(name, surname, patronymic, telNumber, email);
-//    }
-
-    public void newContact() {
+    public Contact newContact() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input name contact");
-        contact.setName(nameOrSurname(scanner));
+        String name = nameOrSurname(scanner);
 
         System.out.println("Input surname contact");
-        contact.setSurname(nameOrSurname(scanner));
+        String surname = nameOrSurname(scanner);
 
         System.out.println("Input patronymic contact");
-        contact.setPatronymic(patronymic(scanner));
+        String patronymic = patronymic(scanner);
 
         System.out.println("Input tell number in format \"+79521234567\"");
-        contact.setTellNumber(telNumber(scanner));
+        String telNumber = telNumber(scanner);
 
         System.out.println("Input email in format \"test@test.ru\"");
-        contact.setEmail(email(scanner));
+        String email = email(scanner);
+
         System.out.println("Contact added successful.");
+        return new Contact(name, surname, patronymic, telNumber, email);
     }
 
     private String nameOrSurname(Scanner scanner) {
