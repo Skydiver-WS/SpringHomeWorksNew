@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5432/list_students
+    username: postgres
+    password: postgres
+    hikari:
+      schema: list_students
