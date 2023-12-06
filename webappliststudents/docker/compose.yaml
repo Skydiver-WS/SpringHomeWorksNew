@@ -1,12 +1,13 @@
 version: '3'
 services:
   postgres:
-    image: postgres:latest
+    container_name: list
+    image: postgres:15.5
+    ports:
+      - '5432:5432'
     environment:
       - POSTGRES_DB=list_students
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - '5432:5432'
     volumes:
-      - ./init.sql:/docker-entrypoint-init-db/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
