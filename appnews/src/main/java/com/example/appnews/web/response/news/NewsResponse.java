@@ -1,6 +1,7 @@
 package com.example.appnews.web.response.news;
 
 
+import com.example.appnews.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,4 +15,5 @@ public class NewsResponse {
     private String title;
     private String description;
     private int commentSize;
+    private User user;
 }

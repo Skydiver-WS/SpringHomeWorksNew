@@ -1,7 +1,9 @@
 package com.example.appnews.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String nikName;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<News> list;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<News> news;
 }

@@ -11,7 +11,7 @@ public interface DatabaseNewsService {
 
     News findById(Long id);
 
-    List<News> findByUser(User user);
+    List<News> findByUser(Long userId);
 
     News createNews(CreateNewsRequest newsRequest);
 
