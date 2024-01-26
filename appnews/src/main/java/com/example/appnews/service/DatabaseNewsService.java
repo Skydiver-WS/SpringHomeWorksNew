@@ -15,4 +15,6 @@ public interface DatabaseNewsService {
 
     News createNews(CreateNewsRequest newsRequest);
 
+    void deleteNewsById(Long id);
+
 }

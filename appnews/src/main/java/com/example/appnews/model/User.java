@@ -17,7 +17,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String nikName;
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<News> news;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<News> news;
 }

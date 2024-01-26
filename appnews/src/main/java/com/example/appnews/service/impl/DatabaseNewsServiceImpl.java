@@ -38,4 +38,9 @@ public class DatabaseNewsServiceImpl implements DatabaseNewsService {
         User user = userRepository.findById(newsRequest.getUserId()).orElse(null);
         return newsRepository.save(newsMapper.newsToResponse(user, newsRequest));
     }
+
+    @Override
+    public void deleteNewsById(Long id) {
+        newsRepository.deleteById(id);
+    }
 }

@@ -12,8 +12,11 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface NewsMapper {
-    @Mapping(target = "user", source = "user")
+    //@Mapping(target = "user", source = "user")
+    @Mapping(target = "id", ignore = true)
     News newsToResponse(User user, CreateNewsRequest newsRequest);
+
+    News newsToResponse(Long id, CreateNewsRequest newsRequest);
     @Mapping(target = "commentSize", expression = "java(news.getComments().size())")
     NewsResponse newsToResponse(News news);
 
