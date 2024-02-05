@@ -2,7 +2,8 @@ package com.example.appnews.mapper;
 
 import com.example.appnews.model.News;
 import com.example.appnews.model.User;
-import com.example.appnews.web.request.dto.news.CreateNewsRequest;
+import com.example.appnews.web.request.news.CreateNewsRequest;
+import com.example.appnews.web.request.news.UpdateNewsRequest;
 import com.example.appnews.web.response.news.ListNewsResponse;
 import com.example.appnews.web.response.news.NewsResponse;
 import org.mapstruct.Mapper;
@@ -12,11 +13,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface NewsMapper {
-    //@Mapping(target = "user", source = "user")
     @Mapping(target = "id", ignore = true)
     News newsToResponse(User user, CreateNewsRequest newsRequest);
 
-    News newsToResponse(Long id, CreateNewsRequest newsRequest);
+    News newsToResponse(Long id, UpdateNewsRequest updateNewsRequest);
     @Mapping(target = "commentSize", expression = "java(news.getComments().size())")
     NewsResponse newsToResponse(News news);
 

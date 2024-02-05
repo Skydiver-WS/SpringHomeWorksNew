@@ -1,8 +1,8 @@
 package com.example.appnews.service;
 
 import com.example.appnews.model.News;
-import com.example.appnews.model.User;
-import com.example.appnews.web.request.dto.news.CreateNewsRequest;
+import com.example.appnews.web.request.news.CreateNewsRequest;
+
 
 import java.util.List;
 
@@ -16,5 +16,7 @@ public interface DatabaseNewsService {
     News createNews(CreateNewsRequest newsRequest);
 
     void deleteNewsById(Long id);
+
+    News updateNews(News news);
 
 }

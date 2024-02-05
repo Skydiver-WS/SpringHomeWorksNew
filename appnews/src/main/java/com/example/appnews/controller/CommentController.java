@@ -1,9 +1,14 @@
 package com.example.appnews.controller;
 
 
+import com.example.appnews.aop.Check;
+import com.example.appnews.mapper.CommentMapper;
 import com.example.appnews.service.DatabaseCommentService;
 import com.example.appnews.service.DatabaseNewsService;
 import com.example.appnews.web.request.comment.CommentRequest;
+import com.example.appnews.web.response.comments.CommentResponse;
+import com.example.appnews.web.response.comments.ListCommentsResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +21,17 @@ public class CommentController {
 
     private final DatabaseCommentService commentService;
     private final DatabaseNewsService newsService;
+    private final CommentMapper commentMapper;
 
     @GetMapping
-    public ResponseEntity<?> findAll(){
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ListCommentsResponse> findAll() {
+        return ResponseEntity.ok(commentMapper.findAll(commentService.findAll()));
     }
 
+    @Check
     @PostMapping("/create")
-    public ResponseEntity<?> createComment(@RequestBody CommentRequest commentRequest){
+    public ResponseEntity<CommentResponse> createComment(@Valid @RequestBody CommentRequest commentRequest) {
+        commentService.createComment(commentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 }

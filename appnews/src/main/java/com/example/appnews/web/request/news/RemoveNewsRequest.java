@@ -1,4 +1,9 @@
 package com.example.appnews.web.request.news;
 
-public class RemoveRequest {
+import lombok.Data;
+
+@Data
+public class RemoveNewsRequest {
+    private Long newsId;
+    private Long userId;
 }

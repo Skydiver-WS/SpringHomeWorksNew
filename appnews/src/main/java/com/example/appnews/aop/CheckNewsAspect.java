@@ -25,14 +25,13 @@ import java.util.Optional;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class CheckAspect {
+public class CheckNewsAspect {
     /**
      * Для полного перехвата управления использовать @Around
      * и тип возвращаемого значения должен быть равен типу в осн. Методе
      */
     private final DatabaseNewsRepository newsRepository;
     private final DatabaseUserRepository userRepository;
-    private final DatabaseCommentRepository commentRepository;
     private final ErrorsMapper errorsMapper;
     @Around("@annotation(Check) && execution(* createNews(..))")
     @SneakyThrows

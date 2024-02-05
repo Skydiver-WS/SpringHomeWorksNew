@@ -5,12 +5,14 @@ import com.example.appnews.model.User;
 import com.example.appnews.repository.DatabaseNewsRepository;
 import com.example.appnews.repository.DatabaseUserRepository;
 import com.example.appnews.service.DatabaseNewsService;
-import com.example.appnews.web.request.dto.news.CreateNewsRequest;
 import com.example.appnews.mapper.NewsMapper;
+import com.example.appnews.web.request.news.CreateNewsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class DatabaseNewsServiceImpl implements DatabaseNewsService {
@@ -42,5 +44,17 @@ public class DatabaseNewsServiceImpl implements DatabaseNewsService {
     @Override
     public void deleteNewsById(Long id) {
         newsRepository.deleteById(id);
+    }
+
+    @Override
+    public News updateNews(News news) {
+        Optional<News> optionalNews = newsRepository.findById(news.getId());
+        if (optionalNews.isPresent()){
+            News update = optionalNews.get();
+            update.setTitle(news.getTitle());
+            update.setDescription(news.getDescription());
+            return newsRepository.save(update);
+        }
+        return null;
     }
 }

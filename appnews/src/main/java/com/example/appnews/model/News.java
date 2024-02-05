@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"title"}))
 public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

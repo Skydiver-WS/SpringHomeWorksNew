@@ -3,7 +3,7 @@ package com.example.appnews.web.errors;
 import lombok.Data;
 
 @Data
-public class ErrorRemoveNewsResponse {
+public class ErrorUpdateRemoveNewsResponse {
     private String title;
     private String nikName;
     private String messages;
