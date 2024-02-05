@@ -5,7 +5,7 @@ import com.example.appnews.aop.Check;
 import com.example.appnews.mapper.CommentMapper;
 import com.example.appnews.service.DatabaseCommentService;
 import com.example.appnews.service.DatabaseNewsService;
-import com.example.appnews.web.request.comment.CommentRequest;
+import com.example.appnews.web.request.comment.CreateCommentRequest;
 import com.example.appnews.web.response.comments.CommentResponse;
 import com.example.appnews.web.response.comments.ListCommentsResponse;
 import jakarta.validation.Valid;
@@ -30,8 +30,8 @@ public class CommentController {
 
     @Check
     @PostMapping("/create")
-    public ResponseEntity<CommentResponse> createComment(@Valid @RequestBody CommentRequest commentRequest) {
-        commentService.createComment(commentRequest);
+    public ResponseEntity<CommentResponse> createComment(@Valid @RequestBody CreateCommentRequest createCommentRequest) {
+        commentService.createComment(createCommentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 }

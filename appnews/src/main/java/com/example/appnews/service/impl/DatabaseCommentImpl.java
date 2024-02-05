@@ -7,7 +7,7 @@ import com.example.appnews.model.News;
 import com.example.appnews.repository.DatabaseCommentRepository;
 import com.example.appnews.repository.DatabaseNewsRepository;
 import com.example.appnews.service.DatabaseCommentService;
-import com.example.appnews.web.request.comment.CommentRequest;
+import com.example.appnews.web.request.comment.CreateCommentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +36,8 @@ public class DatabaseCommentImpl implements DatabaseCommentService {
     }
 
     @Override
-    public Comment createComment(CommentRequest commentRequest) {
-        News news = newsRepository.findNewsByTitleAndUserNikName(commentRequest.getNewsTitle(), commentRequest.getNikName());
-        return commentRepository.save(commentMapper.commentToRequestAndRepository(commentRequest, news));
+    public Comment createComment(CreateCommentRequest createCommentRequest) {
+        News news = newsRepository.findNewsByTitle(createCommentRequest.getNewsTitle()).orElse(null);
+        return commentRepository.save(commentMapper.commentToRequestAndRepository(createCommentRequest, news));
     }
 }

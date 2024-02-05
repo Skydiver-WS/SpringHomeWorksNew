@@ -6,7 +6,6 @@ import lombok.Data;
 public class CommentResponse {
     private Long id;
     private String comment;
-    private String nikName;
-    private Long newsId;
+    private String authorComment;
     private String title;
 }

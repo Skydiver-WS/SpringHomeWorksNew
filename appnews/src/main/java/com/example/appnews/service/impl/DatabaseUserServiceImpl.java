@@ -1,5 +1,6 @@
 package com.example.appnews.service.impl;
 
+import com.example.appnews.mapper.NewsMapper;
 import com.example.appnews.mapper.UserMapper;
 import com.example.appnews.model.User;
 import com.example.appnews.repository.DatabaseNewsRepository;
@@ -20,6 +21,7 @@ public class DatabaseUserServiceImpl implements DatabaseUserService {
     private final DatabaseUserRepository userRepository;
     private final DatabaseNewsRepository newsRepository;
     private final UserMapper userMapper;
+    private final NewsMapper newsMapper;
 
 
     @Override
@@ -36,7 +38,7 @@ public class DatabaseUserServiceImpl implements DatabaseUserService {
     public ListUsersResponse userResponseFull(ListUsersResponse listUsersResponse) {
         return new ListUsersResponse(listUsersResponse.getUserResponseList()
                 .stream().peek(userResponse -> userResponse
-                        .setNewsList(newsRepository.findNewsByUserId(userResponse.getId())))
+                        .setNewsList(newsMapper.listNewsResponse(newsRepository.findNewsByUserId(userResponse.getId()))))
                 .toList());
     }
 
