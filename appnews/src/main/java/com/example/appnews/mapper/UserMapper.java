@@ -6,15 +6,15 @@ import com.example.appnews.web.response.user.ListUsersResponse;
 import com.example.appnews.web.response.user.UserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", implementationName = "UserMapperImpl")
+@Mapper(componentModel = "spring", implementationName = "UserMapperImpl", uses = {NewsMapper.class, CommentMapper.class})
 public interface UserMapper {
     User userToMapper(CreateUserRequest userRequest);
 
-    @Mappings({@Mapping(target = "newsList", source = "user.news"), @Mapping(target = "commentList", source = "user.comments")})
+    @Mapping(target = "newsList", source = "user.news")
+    @Mapping(target = "commentList", source = "user.comments")
     UserResponse responseToMapper(User user);
 
     default ListUsersResponse listUsers(List<User> users) {

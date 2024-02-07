@@ -32,4 +32,9 @@ public class CheckCommentAspect {
         }
         return pjp.proceed();
     }
+    @Around("@annotation(Check) && execution(* removeComment(..))")
+    @SneakyThrows
+    public Object removeComment(ProceedingJoinPoint pjp){
+        return null;
+    }
 }

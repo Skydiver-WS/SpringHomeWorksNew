@@ -1,5 +1,6 @@
 package com.example.appnews.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +20,9 @@ public class News {
     private String title;
     private String description;
     @ManyToOne
+    @JsonIgnore
     private User user;
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Comment> comments;
 }

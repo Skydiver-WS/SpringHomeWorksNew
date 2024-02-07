@@ -12,21 +12,23 @@ import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CommentMapper.class})
 public interface NewsMapper {
-    @Mapping(target = "id", ignore = true)
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "user", source = "user")
+    })
     News newsToResponse(User user, CreateNewsRequest newsRequest);
 
     News newsToResponse(Long id, UpdateNewsRequest updateNewsRequest);
-    @Mappings({
-            @Mapping(target = "commentSize", expression = "java(news.getComments().size())"),
-            @Mapping(target = "authorNikName", expression = "java(news.getUser().getNikName())")
-    })
+
+    @Mapping(target = "commentSize", expression = "java(news.getComments().size())")
+    @Mapping(target = "authorNikName", expression = "java(news.getUser().getNikName())")
     NewsResponse newsToResponse(News news);
 
     List<NewsResponse> listNewsResponse(List<News> newsList);
 
-    default ListNewsResponse newsListResponse(List<News> newsList){
+    default ListNewsResponse newsListResponse(List<News> newsList) {
         ListNewsResponse response = new ListNewsResponse();
         response.setNewsResponseList(newsList.stream()
                 .map(this::newsToResponse).toList());

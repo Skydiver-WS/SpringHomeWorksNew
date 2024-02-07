@@ -40,4 +40,9 @@ public class DatabaseCommentImpl implements DatabaseCommentService {
         News news = newsRepository.findNewsByTitle(createCommentRequest.getNewsTitle()).orElse(null);
         return commentRepository.save(commentMapper.commentToRequestAndRepository(createCommentRequest, news));
     }
+
+    @Override
+    public void removeComment(Long id) {
+        commentRepository.deleteById(id);
+    }
 }

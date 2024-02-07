@@ -11,4 +11,6 @@ public interface DatabaseCommentService {
 
     Comment findCommentById(Long id);
     Comment createComment(CreateCommentRequest createCommentRequest);
+
+    void removeComment(Long id);
 }
