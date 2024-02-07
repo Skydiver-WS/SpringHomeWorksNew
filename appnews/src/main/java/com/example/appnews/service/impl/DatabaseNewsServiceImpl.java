@@ -7,6 +7,7 @@ import com.example.appnews.repository.DatabaseUserRepository;
 import com.example.appnews.service.DatabaseNewsService;
 import com.example.appnews.mapper.NewsMapper;
 import com.example.appnews.web.request.news.CreateNewsRequest;
+import com.example.appnews.web.request.news.EditNewsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,34 +27,23 @@ public class DatabaseNewsServiceImpl implements DatabaseNewsService {
     }
 
     @Override
-    public News findById(Long id) {
-        return null;
-    }
-
-    @Override
-    public List<News> findByUser(Long userId) {
-        return newsRepository.findNewsByUserId(userId);
-    }
-
-    @Override
     public News createNews(CreateNewsRequest newsRequest) {
         User user = userRepository.findById(newsRequest.getUserId()).orElse(null);
         return newsRepository.save(newsMapper.newsToResponse(user, newsRequest));
     }
 
     @Override
-    public void deleteNewsById(Long id) {
-        newsRepository.deleteById(id);
+    public void deleteNewsByTitle(EditNewsRequest editNewsRequest) {
+        newsRepository.deleteNewsByTitle(editNewsRequest.getTitle());
     }
 
     @Override
-    public News updateNews(News news) {
-        Optional<News> optionalNews = newsRepository.findById(news.getId());
-        if (optionalNews.isPresent()){
-            News update = optionalNews.get();
-            update.setTitle(news.getTitle());
-            update.setDescription(news.getDescription());
-            return newsRepository.save(update);
+    public News updateNews(EditNewsRequest editNewsRequest) {
+        Optional<News> news = newsRepository.findNewsByTitle(editNewsRequest.getTitle());
+        if (news.isPresent()){
+            News news1 = news.get();
+            news1.setDescription(editNewsRequest.getDescription());
+            return newsRepository.save(news1);
         }
         return null;
     }

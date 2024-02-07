@@ -3,10 +3,8 @@ package com.example.appnews.controller;
 import com.example.appnews.aop.Check;
 import com.example.appnews.model.News;
 import com.example.appnews.service.DatabaseNewsService;
-import com.example.appnews.service.DatabaseUserService;
 import com.example.appnews.web.request.news.CreateNewsRequest;
-import com.example.appnews.web.request.news.RemoveNewsRequest;
-import com.example.appnews.web.request.news.UpdateNewsRequest;
+import com.example.appnews.web.request.news.EditNewsRequest;
 import com.example.appnews.web.response.news.ListNewsResponse;
 import com.example.appnews.mapper.NewsMapper;
 import com.example.appnews.web.response.news.NewsResponse;
@@ -38,16 +36,16 @@ public class NewsController {
 
     @Check
     @DeleteMapping("/remove")
-    public ResponseEntity<Void> deleteNews(@RequestBody RemoveNewsRequest removeNewsRequest) {
-        newsService.deleteNewsById(removeNewsRequest.getNewsId());
+    public ResponseEntity<Void> deleteNews(@Valid @RequestBody EditNewsRequest removeNewsRequest) {
+        newsService.deleteNewsByTitle(removeNewsRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @Check
-    @PutMapping("/update/{id}")
-    public ResponseEntity<NewsResponse> updateNews(@PathVariable Long id, @RequestBody UpdateNewsRequest newsRequest) {
-        News news = newsMapper.newsToResponse(id, newsRequest);
-        NewsResponse newsResponse = newsMapper.newsToResponse(newsService.updateNews(news));
+    @PutMapping("/edit")
+    public ResponseEntity<NewsResponse> editNews(@RequestBody EditNewsRequest newsRequest) {
+        News news = newsService.updateNews(newsRequest);
+        NewsResponse newsResponse = newsMapper.newsToResponse(news);
         return ResponseEntity.status(HttpStatus.OK).body(newsResponse);
     }
 

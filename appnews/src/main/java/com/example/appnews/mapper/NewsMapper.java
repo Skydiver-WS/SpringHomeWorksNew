@@ -3,7 +3,7 @@ package com.example.appnews.mapper;
 import com.example.appnews.model.News;
 import com.example.appnews.model.User;
 import com.example.appnews.web.request.news.CreateNewsRequest;
-import com.example.appnews.web.request.news.UpdateNewsRequest;
+import com.example.appnews.web.request.news.EditNewsRequest;
 import com.example.appnews.web.response.news.ListNewsResponse;
 import com.example.appnews.web.response.news.NewsResponse;
 import org.mapstruct.Mapper;
@@ -19,8 +19,6 @@ public interface NewsMapper {
             @Mapping(target = "user", source = "user")
     })
     News newsToResponse(User user, CreateNewsRequest newsRequest);
-
-    News newsToResponse(Long id, UpdateNewsRequest updateNewsRequest);
 
     @Mapping(target = "commentSize", expression = "java(news.getComments().size())")
     @Mapping(target = "authorNikName", expression = "java(news.getUser().getNikName())")

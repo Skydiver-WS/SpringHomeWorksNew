@@ -3,10 +3,10 @@ package com.example.appnews.controller;
 
 import com.example.appnews.aop.Check;
 import com.example.appnews.mapper.CommentMapper;
+import com.example.appnews.model.Comment;
 import com.example.appnews.service.DatabaseCommentService;
-import com.example.appnews.service.DatabaseNewsService;
 import com.example.appnews.web.request.comment.CreateCommentRequest;
-import com.example.appnews.web.request.comment.RemoveComment;
+import com.example.appnews.web.request.comment.EditComment;
 import com.example.appnews.web.response.comments.CommentResponse;
 import com.example.appnews.web.response.comments.ListCommentsResponse;
 import jakarta.validation.Valid;
@@ -37,8 +37,16 @@ public class CommentController {
 
     @Check
     @DeleteMapping("/remove")
-    public ResponseEntity<Void> removeComment(@RequestBody RemoveComment removeComment) {
-        commentService.removeComment(removeComment.getUserId());
+    public ResponseEntity<Void> removeComment(@RequestBody @Valid EditComment editComment) {
+        commentService.removeComment(editComment.getId());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Check
+    @PutMapping("/edit")
+    public ResponseEntity<CommentResponse> editComment(@Valid @RequestBody EditComment editComment){
+        Comment comment = commentService.editComment(editComment);
+        CommentResponse commentResponse = commentMapper.commentToResponse(comment);
+        return ResponseEntity.ok().body(commentResponse);
     }
 }

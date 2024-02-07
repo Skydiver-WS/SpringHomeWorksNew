@@ -8,10 +8,12 @@ import com.example.appnews.repository.DatabaseCommentRepository;
 import com.example.appnews.repository.DatabaseNewsRepository;
 import com.example.appnews.service.DatabaseCommentService;
 import com.example.appnews.web.request.comment.CreateCommentRequest;
+import com.example.appnews.web.request.comment.EditComment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +33,16 @@ public class DatabaseCommentImpl implements DatabaseCommentService {
     }
 
     @Override
-    public Comment findCommentById(Long id) {
-        return null;
+    public Comment editComment(EditComment editComment) {
+        Comment newComment = commentRepository.findById(editComment.getId()).orElse(null);
+        if (newComment != null) {
+            newComment.setComment(editComment.getNewComment());
+            return commentRepository.save(newComment);
+        }
+       return null;
     }
+
+
 
     @Override
     public Comment createComment(CreateCommentRequest createCommentRequest) {
