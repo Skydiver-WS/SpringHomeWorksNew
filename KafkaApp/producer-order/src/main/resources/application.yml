@@ -1,0 +1,8 @@
+spring:
+  kafka:
+    bootstrap: ${KAFKA_RESERVATION_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      topic:
+        create-order: create-order
+        create-order-status: status
+        kafkaMessageGroupId: "get-status"
