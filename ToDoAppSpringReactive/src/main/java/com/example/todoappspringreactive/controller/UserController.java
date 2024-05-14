@@ -2,6 +2,7 @@ package com.example.todoappspringreactive.controller;
 
 import com.example.todoappspringreactive.entity.User;
 import com.example.todoappspringreactive.service.UserService;
+import com.example.todoappspringreactive.web.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,15 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Flux<ResponseEntity<User>> getUser() {
-        return userService.findAll().map(ResponseEntity::ok);
+    public Flux<UserResponse> getUsers() {
+        return userService.findAll();
     }
 
     @GetMapping("/get-by-id")
     public Mono<ResponseEntity<User>> getUserById(@RequestParam String id) {
-        return userService.findById(id).map(ResponseEntity::ok);
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping

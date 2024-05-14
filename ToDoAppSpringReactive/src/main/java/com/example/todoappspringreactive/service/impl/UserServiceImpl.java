@@ -1,8 +1,13 @@
 package com.example.todoappspringreactive.service.impl;
 
+import com.example.todoappspringreactive.entity.Task;
 import com.example.todoappspringreactive.entity.User;
+import com.example.todoappspringreactive.mapper.UserMapper;
+import com.example.todoappspringreactive.repository.TaskRepository;
 import com.example.todoappspringreactive.repository.UserRepository;
+import com.example.todoappspringreactive.service.TaskService;
 import com.example.todoappspringreactive.service.UserService;
+import com.example.todoappspringreactive.web.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,11 +20,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
+    private final UserMapper userMapper;
 
 
     @Override
-    public Flux<User> findAll() {
-        return userRepository.findAll();
+    public Flux<UserResponse> findAll() {
+        return userRepository.findAll()
+                .map(ur -> userMapper.taskToUserResponse(ur, new Task()));
     }
 
     @Override
@@ -47,6 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> remove(String id) {
+        taskRepository.deleteByAuthorId(id);
         return userRepository.deleteById(id);
     }
 }
