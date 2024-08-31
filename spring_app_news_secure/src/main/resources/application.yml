@@ -1,1 +1,22 @@
-spring.application.name=spring_app_news_secure
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  jpa:
+    generate-ddl: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news_db
+    username: postgres
+    password: postgres
+    hikari:
+      schema: news
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS news
+      connection-timeout: 10000
+
+app:
+  jwt:
+    secret: "someSecretKeysomeSecretKeysomeSecretKeysomeSecretKeysomeSecretKeysomeSecretKeysomeSecretKeysomeSecretKeysomeSecretKey"
+    tokenExpiration: 8m
+    refreshTokenExpiration: 10m

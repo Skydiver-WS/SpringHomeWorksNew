@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+target
+.mvn
+mvnw.cmd
+mvnw
+

@@ -11,6 +11,9 @@ import com.example.springappnewssecure.web.response.NewsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 
@@ -21,39 +24,48 @@ public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final UserRepository userRepository;
     private final NewsMapper newsMapper;
+
     @Override
-    public List<NewsResponse> findAllNews() {
+    public Flux<List<NewsResponse>> findAllNews() {
         log.info("Find all news.");
-        return newsMapper.listNewsResponseFromListNews(newsRepository.findAll());
+        return Flux.just(newsMapper.listNewsResponseFromListNews(newsRepository.findAll()));
     }
 
     @Override
-    public NewsResponse createNews(NewsRequest newsRequest) {
+    public Mono<NewsResponse> createNews(NewsRequest newsRequest) {
         log.info("Create news: {}", newsRequest);
-        User user = userRepository.findByUsername(newsRequest.getAuthor())
-                .orElseThrow(() -> new RuntimeException("User " + newsRequest.getAuthor() + " not found"));
-        News news = newsRepository.save(newsMapper.newsFromNewsRequest(newsRequest, user));
-        log.info("News {} created.", news.getTitle());
-        return newsMapper.newsResponseFromNews(news);
+        return Mono.fromCallable(() -> {
+                    User user = userRepository.findByUsername(newsRequest.getAuthor())
+                            .orElseThrow(() -> new RuntimeException("User " + newsRequest.getAuthor() + " not found"));
+                    News news = newsRepository.save(newsMapper.newsFromNewsRequest(newsRequest, user));
+                    log.info("News {} created.", news.getTitle());
+                    return news;
+                })
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(newsMapper::newsResponseFromNews);
+
     }
 
     @Override
-    public NewsResponse updateNews(String title, NewsRequest newsRequest) {
-        log.info("Update news {} ", title);
-        News news = newsRepository.findByTitle(title).orElseThrow(() ->
-                new RuntimeException("News " + title + " not found"));
-        newsMapper.updateNewsFromNewsResponse(news, newsRequest);
-        try {
-            News newsUpdate = newsRepository.save(news);
-            log.info("News {} update successful.", newsUpdate);
-            return newsMapper.newsResponseFromNews(newsUpdate);
-        } catch (Exception ex){
-            log.error("Title {} exists", newsRequest.getTitle());
-            return NewsResponse.builder()
-                    .title(newsRequest.getTitle())
-                    .errorMessage(ex.getMessage())
-                    .build();
-        }
+    public Mono<NewsResponse> updateNews(String title, NewsRequest newsRequest) {
+        return Mono.fromCallable(() -> {
+                    log.info("Update news {} ", title);
+                    News news = newsRepository.findByTitle(title).orElseThrow(() ->
+                            new RuntimeException("News " + title + " not found"));
+                    newsMapper.updateNewsFromNewsResponse(news, newsRequest);
+                    News newsUpdate = newsRepository.save(news);
+                    log.info("News {} update successful.", newsUpdate);
+                    return news;
+                })
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(newsMapper::newsResponseFromNews)
+                .onErrorResume(e -> {
+                    log.error("Title {} exists", newsRequest.getTitle());
+                    return Mono.just(NewsResponse.builder()
+                            .title(newsRequest.getTitle())
+                            .errorMessage(e.getMessage())
+                            .build());
+                });
     }
 
     @Override
