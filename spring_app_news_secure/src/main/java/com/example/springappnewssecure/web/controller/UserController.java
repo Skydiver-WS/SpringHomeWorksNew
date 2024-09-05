@@ -47,16 +47,16 @@ public class UserController {
 
     @PutMapping
     @LoggingController
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER', 'ROLE_MODERATOR')")
     public Mono<ResponseEntity<UserResponse>> updateUser(ServerHttpRequest serverHttpRequest, @RequestParam Long id,
                                                          @RequestBody UserRequest userRequest) {
-        return userService.updateUser(userRequest).map(ResponseEntity::ok);
+        return userService.updateUser(id, userRequest).map(ResponseEntity::ok);
     }
 
     @DeleteMapping
     @LoggingController
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Mono<ResponseEntity<Void>> deleteUser(ServerHttpRequest serverHttpRequest, @RequestParam String userName) {
-        return userService.removeUser(userName).thenReturn(ResponseEntity.noContent().build());
+    public Mono<ResponseEntity<Void>> deleteUser(ServerHttpRequest serverHttpRequest, @RequestParam Long id) {
+        return userService.removeUser(id).thenReturn(ResponseEntity.noContent().build());
     }
 }

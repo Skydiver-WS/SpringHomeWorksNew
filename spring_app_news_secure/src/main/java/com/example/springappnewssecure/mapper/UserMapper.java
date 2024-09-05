@@ -2,15 +2,10 @@ package com.example.springappnewssecure.mapper;
 
 import com.example.springappnewssecure.entity.Role;
 import com.example.springappnewssecure.entity.User;
-import com.example.springappnewssecure.security.UserDetailsService;
-import com.example.springappnewssecure.service.impl.UserServiceImpl;
-import com.example.springappnewssecure.service.security.impl.JwtTokenServiceImpl;
 import com.example.springappnewssecure.web.request.UserRequest;
 import com.example.springappnewssecure.web.response.UserResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
+import org.mapstruct.ap.internal.util.Strings;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -32,9 +27,20 @@ public interface UserMapper {
 
     List<UserResponse> listUserResponseFromListUsers(List<User> userList);
 
-    @Mapping(target = "password", expression = "java(new BCryptPasswordEncoder()" +
-            ".encode(userRequest.getPassword()))")
+    @Mapping(target = "password", source = "userRequest.password", qualifiedByName = "setPassword",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "username", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromUserRequest(@MappingTarget User user, UserRequest userRequest);
+
+    @Named("setPassword")
+    default String setPassword(String password){
+        if(Strings.isNotEmpty(password) ||
+        !password.isBlank()){
+         return new BCryptPasswordEncoder()
+                 .encode(password);
+        }
+        return null;
+    }
 
 }

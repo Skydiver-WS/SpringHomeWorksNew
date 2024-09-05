@@ -1,6 +1,8 @@
 package com.example.springappnewssecure.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,12 +25,12 @@ public class Role {
     @JsonIgnore
     private User user;
 
-
+    @JsonValue
     public GrantedAuthority getAuthority() {
         return new SimpleGrantedAuthority(authority.toString());
     }
 
-
+    @JsonCreator
     public static Role from(RoleType type) {
         var role = new Role();
         role.setAuthority(type);

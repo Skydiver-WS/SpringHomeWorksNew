@@ -31,6 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Mono<UserResponse> singIn(UserRequest userRequest) {
         log.info("Get token for user {}", userRequest.getUsername());
+
         return authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()))
                 .publishOn(Schedulers.boundedElastic())
@@ -42,8 +43,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     return response;
                 })
                 .flatMap(usr -> {
+
                     String token = usr.getToken();
-                    return tokenService.tokenSave(token)
+                    return tokenService.tokenSave(usr.getId(), usr.getRoles().getFirst().getAuthority().getAuthority(), token)
                             .thenReturn(usr);
                 });
     }

@@ -1,19 +1,24 @@
 package com.example.springappnewssecure.entity;
 
-import jakarta.persistence.Index;
+
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @RedisHash("Token")
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Token implements Serializable {
     @Indexed
+    @Id
     private Long id;
     @Indexed
     private String token;
+
+    private List<Role> roleList;
 }

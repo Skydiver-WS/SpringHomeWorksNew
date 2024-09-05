@@ -15,11 +15,11 @@ public interface UserService {
 
     Mono<UserResponse> createUser(UserRequest userRequest, RoleType roleType);
 
-    Mono<UserResponse> updateUser(UserRequest userRequest);
+    Mono<UserResponse> updateUser(Long id, UserRequest userRequest);
 
     Mono<User> findByUsername(String username);
 
 
-    Mono<Void> removeUser(String username);
+    Mono<Void> removeUser(Long id);
 
 }

@@ -5,6 +5,7 @@ import com.example.springappnewssecure.entity.RoleType;
 import com.example.springappnewssecure.entity.User;
 import com.example.springappnewssecure.mapper.UserMapper;
 import com.example.springappnewssecure.repository.UserRepository;
+import com.example.springappnewssecure.service.TokenService;
 import com.example.springappnewssecure.service.UserService;
 import com.example.springappnewssecure.web.request.UserRequest;
 import com.example.springappnewssecure.web.response.UserResponse;
@@ -24,6 +25,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final TokenService tokenService;
 
 
     @Override
@@ -46,22 +48,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<UserResponse> updateUser(UserRequest userRequest) {
-        log.info("Find user by id: {}", userRequest.getId());
+    public Mono<UserResponse> updateUser(Long id ,UserRequest userRequest) {
+        log.info("Find user by id: {}", id);
 
         return Mono.fromCallable(() -> {
-                    User user = userRepository.findById(userRequest.getId()).orElseThrow(() ->
+                    User user = userRepository.findById(id).orElseThrow(() ->
                             new RuntimeException("User not found"));
-                    log.info("User by id {} found.", userRequest.getId());
+                    log.info("User by id {} found.", id);
                     userMapper.updateUserFromUserRequest(user, userRequest);
                     userRepository.save(user);
                     log.info("User {} update successful", user);
                     return user;
                 })
-                .subscribeOn(Schedulers.boundedElastic()) // Выполняем блокирующие операции в пуле потоков для блокирующих задач
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(user -> tokenService.deleteToken(user.getId())
+                        .thenReturn(user))  // Возвращаем пользователя после удаления токена
                 .map(userMapper::userResponseFromUser) // Преобразуем пользователя в UserResponse
                 .onErrorResume(e -> {
-                    // Логирование ошибки и возврат UserResponse с сообщением об ошибке
                     log.error("Error updating user: {}", e.getMessage());
                     return Mono.just(UserResponse.builder()
                             .errorMessage(e.getMessage())
@@ -77,12 +80,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<Void> removeUser(String username) {
-        log.info("Remove user by username {}", username);
-        log.info("User {} remove successful", username);
-        return Mono.fromRunnable(() -> userRepository.deleteByUsername(username))
+    public Mono<Void> removeUser(Long id) {
+        log.info("Remove user by id {}", id);
+        return Mono.fromRunnable(() -> userRepository.deleteById(id))
+                .then(Mono.defer(() -> tokenService.deleteToken(id)))
                 .subscribeOn(Schedulers.boundedElastic())
-                .doOnSuccess(unused -> log.info("User {} removed successfully", username))
+                .doOnSuccess(unused -> log.info("User in {} delete successfully", id))
                 .then();
     }
 }
