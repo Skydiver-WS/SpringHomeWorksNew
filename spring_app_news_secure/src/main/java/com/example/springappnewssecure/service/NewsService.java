@@ -11,7 +11,7 @@ public interface NewsService {
 
     Flux<List<NewsResponse>> findAllNews();
 
-    Mono<NewsResponse> createNews(NewsRequest newsRequest);
+    Mono<NewsResponse> createNews(Long userId, NewsRequest newsRequest);
 
     Mono<NewsResponse> updateNews(String title, NewsRequest newsRequest);
 

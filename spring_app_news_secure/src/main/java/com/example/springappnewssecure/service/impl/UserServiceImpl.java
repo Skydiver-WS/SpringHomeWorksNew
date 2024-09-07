@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -87,5 +88,11 @@ public class UserServiceImpl implements UserService {
                 .subscribeOn(Schedulers.boundedElastic())
                 .doOnSuccess(unused -> log.info("User in {} delete successfully", id))
                 .then();
+    }
+
+    @Override
+    public Boolean findUserByIdAndUsername(Long id, String username) {
+        log.info("Find by user by id and username");
+        return userRepository.findByIdAndUsername(id, username).isEmpty();
     }
 }

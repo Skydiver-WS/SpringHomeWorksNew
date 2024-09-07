@@ -19,7 +19,8 @@ public interface UserService {
 
     Mono<User> findByUsername(String username);
 
-
     Mono<Void> removeUser(Long id);
+
+    Boolean findUserByIdAndUsername(Long id, String username);
 
 }

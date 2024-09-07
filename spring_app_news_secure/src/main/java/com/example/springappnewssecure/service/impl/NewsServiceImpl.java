@@ -32,11 +32,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Mono<NewsResponse> createNews(NewsRequest newsRequest) {
+    public Mono<NewsResponse> createNews(Long userId,NewsRequest newsRequest) {
         log.info("Create news: {}", newsRequest);
         return Mono.fromCallable(() -> {
-                    User user = userRepository.findByUsername(newsRequest.getAuthor())
-                            .orElseThrow(() -> new RuntimeException("User " + newsRequest.getAuthor() + " not found"));
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User " + userId + " not found"));
                     News news = newsRepository.save(newsMapper.newsFromNewsRequest(newsRequest, user));
                     log.info("News {} created.", news.getTitle());
                     return news;

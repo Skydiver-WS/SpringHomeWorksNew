@@ -2,6 +2,7 @@ package com.example.springappnewssecure.service.security.impl;
 
 import com.example.springappnewssecure.entity.Token;
 import com.example.springappnewssecure.service.TokenService;
+import com.example.springappnewssecure.service.UserService;
 import com.example.springappnewssecure.service.security.JwtTokenService;
 import com.example.springappnewssecure.service.security.UserDetailsService;
 import io.jsonwebtoken.Claims;
@@ -34,13 +35,14 @@ import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenTy
 public class JwtTokenFilter implements WebFilter {
     private final JwtTokenService jwtTokenService;
     private final UserDetailsService userDetailsService;
+    private final UserService userService;
     private final TokenService tokenService;
 
     @Override
     @NonNull
     public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         log.info("Started filter");
-        Mono<Token> cashToken = getTokenFromCash(exchange.getRequest());
+        Mono<Token> cashToken = getTokenFromCash(injectParameter(exchange.getRequest()));
 
 
         return authByTokenFromCash(cashToken, exchange, chain);
@@ -71,8 +73,13 @@ public class JwtTokenFilter implements WebFilter {
     private Mono<Void> authByTokenFromRequest(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         log.info("Start auth by token from headers");
         String token = resolveToken(exchange.getRequest());
+
         if (StringUtils.hasText(token) && jwtTokenService.isValidToken(token)) {
             String[] injectUsernameAndPassword = jwtTokenService.injectUserNameAndPasswordFromToken(token);
+            if(userService.findUserByIdAndUsername(injectParameter(exchange.getRequest()), injectUsernameAndPassword[0])){
+                log.error("Unauthorized access attempt!!!");
+                return chain.filter(exchange);
+            }
             return userDetailsService.findByUsername(injectUsernameAndPassword[0])
                     .flatMap(userDetails -> {
                         if (!userDetails.getPassword().equals(injectUsernameAndPassword[1])) {
@@ -101,19 +108,22 @@ public class JwtTokenFilter implements WebFilter {
             log.info("Inject token is successful");
             return bearerToken.substring(7);
         }
-        log.error("Inject token is failed");
+        log.warn("Inject token is failed");
         return null;
     }
 
-    private Mono<Token> getTokenFromCash(ServerHttpRequest request) {
+    private Long injectParameter(ServerHttpRequest request){
         log.info("Inject id from url");
         String param = request.getURI().getQuery();
         if (param != null && param.contains("id")) {
-            Long userId = Long.valueOf(param.replace("id=", "").trim());
-            return tokenService.getToken(userId)
-                    .switchIfEmpty(Mono.just(new Token()));
+           return Long.valueOf(param.replace("id=", "").trim());
         }
-        log.warn("Token in cash not found");
-        return Mono.just(new Token());
+        return 0L;
+    }
+
+    private Mono<Token> getTokenFromCash(Long userId) {
+        log.info("Find token from cash");
+        return tokenService.getToken(userId)
+                .switchIfEmpty(Mono.just(new Token()));
     }
 }
