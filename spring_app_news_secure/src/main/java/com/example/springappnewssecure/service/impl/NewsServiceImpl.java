@@ -69,9 +69,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void removeNews(String title) {
+    public Mono<Void> removeNews(String title) {
         log.info("News remove by title {}", title);
-        newsRepository.deleteByTitle(title);
-        log.info("News removed by title {} successful", title);
+        return Mono.fromRunnable(() -> newsRepository.deleteByTitle(title))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSuccess(unused ->  log.info("News removed by title {} successful", title))
+                .then();
     }
 }

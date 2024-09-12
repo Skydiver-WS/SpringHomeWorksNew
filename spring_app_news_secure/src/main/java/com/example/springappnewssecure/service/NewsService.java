@@ -15,6 +15,6 @@ public interface NewsService {
 
     Mono<NewsResponse> updateNews(String title, NewsRequest newsRequest);
 
-    void removeNews(String title);
+    Mono<Void> removeNews(String title);
 
 }

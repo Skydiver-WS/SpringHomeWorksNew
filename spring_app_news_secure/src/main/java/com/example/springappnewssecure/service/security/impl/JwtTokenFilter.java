@@ -116,7 +116,9 @@ public class JwtTokenFilter implements WebFilter {
         log.info("Inject id from url");
         String param = request.getURI().getQuery();
         if (param != null && param.contains("id")) {
-           return Long.valueOf(param.replace("id=", "").trim());
+            String[] multiParam = request.getURI().getQuery().split("&");
+            String idParam = multiParam.length > 0 ? multiParam[0] : param;
+           return Long.valueOf(idParam.replace("id=", "").trim());
         }
         return 0L;
     }

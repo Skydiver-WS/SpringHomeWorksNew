@@ -42,7 +42,8 @@ public class NewsController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     @DeleteMapping
     @LoggingController
-    public void deleteNews(ServerHttpRequest serverHttpRequest, @RequestParam Long id,@RequestParam String title){
-        newsService.removeNews(title);
+    public Mono<Void> deleteNews(ServerHttpRequest serverHttpRequest, @RequestParam Long id,@RequestParam String title){
+
+        return newsService.removeNews(title);
     }
 }
